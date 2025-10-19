@@ -1,7 +1,6 @@
 # tensor.homes Architecture
 
 ## Stack
-- Next.js 15 (App Router)
 - tldraw SDK  
 - Clerk (Auth)
 - Prisma + Prisma Postgres (hosted at db.prisma.io)
