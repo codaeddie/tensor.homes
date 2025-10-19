@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree app /F /A)",
+      "Bash(find app -type f ( -name \"*.ts\" -o -name \"*.tsx\" ) ! -path \"*/generated/*\" ! -path \"*/node_modules/*\")",
+      "Bash(npx prisma generate)",
+      "Bash(npx prisma db push)",
+      "Bash(npm run lint)",
+      "Bash(npx biome check --write)",
+      "Bash(npx biome check --write --unsafe)",
+      "Bash(npm run dev)",
+      "Bash(git add -A)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
