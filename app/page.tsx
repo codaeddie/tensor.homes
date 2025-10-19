@@ -4,6 +4,8 @@
  * Simple marketing page with call-to-action to sign in or get started.
  */
 
+export const runtime = "nodejs"; // Required for Clerk auth
+
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";

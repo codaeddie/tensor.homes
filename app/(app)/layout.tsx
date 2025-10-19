@@ -5,6 +5,8 @@
  * Provides navigation header with user menu and sign-out functionality.
  */
 
+export const runtime = "nodejs"; // Required for Clerk auth
+
 import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
