@@ -1,5 +1,5 @@
 /**
- * Clerk authentication middleware.
+ * Clerk authentication middleware - DEBUG VERSION
  *
  * Protects routes under /dashboard and /editor from unauthorized access.
  * Public routes include /, /signin, /view/*, and all /API routes.
@@ -9,17 +9,41 @@
  */
 
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/editor(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    const { userId, redirectToSignIn } = await auth();
+  const path = req.nextUrl.pathname;
+  const isProtected = isProtectedRoute(req);
 
-    if (!userId) {
-      return redirectToSignIn();
+  console.log(`[MIDDLEWARE] Route: ${path} | Protected: ${isProtected}`);
+
+  if (isProtected) {
+    console.log(`[MIDDLEWARE] Checking auth for protected route: ${path}`);
+
+    try {
+      const { userId, redirectToSignIn } = await auth();
+      console.log(`[MIDDLEWARE] Auth result - userId: ${userId ? 'EXISTS' : 'NULL'}`);
+
+      if (!userId) {
+        console.log(`[MIDDLEWARE] Redirecting to sign-in from: ${path}`);
+        return redirectToSignIn();
+      }
+
+      console.log(`[MIDDLEWARE] Auth SUCCESS for ${path}`);
+    } catch (error) {
+      console.error(`[MIDDLEWARE] Auth ERROR on ${path}:`, error);
+      return NextResponse.json(
+        { error: "Authentication failed", path, message: String(error) },
+        { status: 500 }
+      );
     }
+  } else {
+    console.log(`[MIDDLEWARE] Public route, skipping auth: ${path}`);
   }
+
+  console.log(`[MIDDLEWARE] Allowing request to: ${path}`);
 });
 
 export const config = {
