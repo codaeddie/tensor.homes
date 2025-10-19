@@ -1,5 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
+// Force this to run on Node.js runtime instead of Edge
+export const runtime = 'nodejs'
+
 // Define which routes should be public (no auth required)
 const isPublicRoute = createRouteMatcher([
   '/',                    // Landing page
