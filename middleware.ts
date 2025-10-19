@@ -1,25 +1,15 @@
 /**
- * Minimal middleware - Clerk auth handled at route level instead
- *
- * This file must exist for Clerk to work, but we're not using it for auth checks.
- * Auth protection happens in each protected page/route using auth() directly.
+ * Minimal Clerk middleware - auth checks happen at route/page level
+ * 
+ * This middleware ONLY sets up Clerk context. All auth protection
+ * happens in pages/layouts using auth() directly.
  */
 
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/editor(.*)"]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    const { userId, redirectToSignIn } = await auth();
-    if (!userId) {
-      return redirectToSignIn();
-    }
-  }
-});
+export default clerkMiddleware();
 
 export const config = {
-  runtime: "nodejs",
   matcher: [
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
