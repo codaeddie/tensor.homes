@@ -27,8 +27,8 @@ export default function EditorPage() {
       setSaving(true);
       const editor = editorRef.current;
 
-      // Get snapshot
-      const snapshot = getSnapshot(editor.store);
+      // Get snapshot (only store document, not session state)
+      const { document: snapshot } = getSnapshot(editor.store);
 
       // Generate thumbnail using editor.toImage() (not deprecated exportToBlob)
       const shapeIds = editor.getCurrentPageShapeIds();

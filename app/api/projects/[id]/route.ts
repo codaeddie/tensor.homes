@@ -45,7 +45,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
     const response: ProjectWithSnapshot = {
       id: project.id,
       title: project.title,
-      snapshot: project.snapshot as ProjectWithSnapshot["snapshot"],
+      snapshot: project.snapshot as unknown as ProjectWithSnapshot["snapshot"],
       thumbnailUrl: project.thumbnailUrl,
       published: project.published,
       createdAt: project.createdAt,
@@ -128,7 +128,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
     const response: ProjectWithSnapshot = {
       id: project.id,
       title: project.title,
-      snapshot: project.snapshot as ProjectWithSnapshot["snapshot"],
+      snapshot: project.snapshot as unknown as ProjectWithSnapshot["snapshot"],
       thumbnailUrl: project.thumbnailUrl,
       published: project.published,
       createdAt: project.createdAt,

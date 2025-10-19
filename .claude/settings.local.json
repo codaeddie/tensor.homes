@@ -21,7 +21,14 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(cat .env.local)",
       "Bash(find app/api -name \"*.ts\" -exec grep -l \"export const runtime\" {} ;)",
-      "Bash(npm run format)"
+      "Bash(npm run format)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix Edge Runtime compatibility and improve code quality\n\n- Fixed Clerk middleware to use Edge Runtime (removed runtime: ''nodejs'')\n- Added runtime: ''nodejs'' to all API routes (required for Prisma Client)\n- Fixed React Hook dependency warnings (useCallback for async functions)\n- Replaced <img> with Next.js <Image> component for optimized loading\n- Fixed TypeScript ''any'' types with proper type definitions\n- Added remote image pattern for Vercel Blob storage\n- Created comprehensive CONTEXT.md documentation\n- Updated CLAUDE.md with latest architecture patterns\n\nAll linting issues resolved. Dev server starts successfully.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(prisma --version)",
+      "Bash(npx prisma --version)",
+      "Bash(cat .gitignore)",
+      "Bash(git add package.json)",
+      "Bash(git commit -m \"Add prisma generate to build script for Vercel deployment\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix tldraw v4 snapshot type and TypeScript errors\n\n- Fixed getSnapshot() to destructure document from TLEditorSnapshot\n- Updated type assertions to use ''as unknown as'' for Prisma Json conversion\n- Build now completes successfully with all type checks passing\n\nFixes Vercel deployment error: Module not found @/app/generated/prisma\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

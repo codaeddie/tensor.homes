@@ -64,8 +64,8 @@ export default function EditorIdPage({ params }: PageProps) {
         setSaving(true);
         const editor = editorRef.current;
 
-        // Get snapshot
-        const snapshot = getSnapshot(editor.store);
+        // Get snapshot (only store document, not session state)
+        const { document: snapshot } = getSnapshot(editor.store);
 
         const body: {
           title: string;
