@@ -5,6 +5,7 @@
  * Public routes include /, /signin, /view/*, and all /api routes.
  *
  * Uses Node.js runtime (Next.js 15.5+) to support Clerk's crypto module.
+ * Uses manual auth check instead of auth.protect() for Node.js runtime compatibility.
  */
 
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
@@ -13,7 +14,11 @@ const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/editor(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
-    await auth.protect();
+    const { userId, redirectToSignIn } = await auth();
+
+    if (!userId) {
+      return redirectToSignIn();
+    }
   }
 });
 
