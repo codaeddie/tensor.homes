@@ -5,12 +5,21 @@
  * Auth protection happens in each protected page/route using auth() directly.
  */
 
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Clerk middleware with NO protection - all routes public by default
-export default clerkMiddleware();
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/editor(.*)"]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    const { userId, redirectToSignIn } = await auth();
+    if (!userId) {
+      return redirectToSignIn();
+    }
+  }
+});
 
 export const config = {
+  runtime: "nodejs",
   matcher: [
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
