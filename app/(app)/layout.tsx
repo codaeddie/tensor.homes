@@ -1,13 +1,23 @@
 /**
- * Layout for protected app routes (dashboard, editor, view).
+ * Layout for protected app routes (dashboard, editor).
  *
+ * SERVER COMPONENT - checks auth and redirects if not signed in.
  * Provides navigation header with user menu and sign-out functionality.
  */
 
+import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const { userId } = await auth();
+  
+  // Protect this entire route group - redirect to signin if not authenticated
+  if (!userId) {
+    redirect("/signin");
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b bg-white">
