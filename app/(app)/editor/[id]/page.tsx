@@ -13,7 +13,7 @@
 
 import { useRouter } from "next/navigation";
 import { use, useEffect, useRef, useState } from "react";
-import { type Editor, exportToBlob, Tldraw } from "tldraw";
+import { type Editor, Tldraw } from "tldraw";
 import type { ProjectWithSnapshot } from "@/lib/types";
 import "tldraw/tldraw.css";
 
@@ -40,7 +40,7 @@ export default function EditorIdPage({ params }: PageProps) {
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [fetchProject]);
+  }, [id]);
 
   useEffect(() => {
     if (project && editorRef.current && hasUnsavedChanges) {
@@ -52,7 +52,7 @@ export default function EditorIdPage({ params }: PageProps) {
         handleSave();
       }, 5000);
     }
-  }, [hasUnsavedChanges, handleSave, project]);
+  }, [hasUnsavedChanges]);
 
   async function fetchProject() {
     try {
@@ -92,15 +92,13 @@ export default function EditorIdPage({ params }: PageProps) {
         snapshot,
       };
 
-      // Generate thumbnail if requested
+      // Generate thumbnail if requested using editor.toImage() (not deprecated exportToBlob)
       if (generateThumbnail) {
         try {
           const shapeIds = editor.getCurrentPageShapeIds();
-          const blob = await exportToBlob({
-            editor,
-            ids: [...shapeIds],
+          const { blob } = await editor.toImage([...shapeIds], {
             format: "png",
-            opts: { background: true, scale: 1 },
+            background: true,
           });
 
           const reader = new FileReader();

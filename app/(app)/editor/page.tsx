@@ -11,7 +11,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { type Editor, exportToBlob, Tldraw } from "tldraw";
+import { type Editor, Tldraw } from "tldraw";
 import "tldraw/tldraw.css";
 
 export default function EditorPage() {
@@ -30,13 +30,11 @@ export default function EditorPage() {
       // Get snapshot
       const snapshot = editor.store.getSnapshot();
 
-      // Generate thumbnail
+      // Generate thumbnail using editor.toImage() (not deprecated exportToBlob)
       const shapeIds = editor.getCurrentPageShapeIds();
-      const blob = await exportToBlob({
-        editor,
-        ids: [...shapeIds],
+      const { blob } = await editor.toImage([...shapeIds], {
         format: "png",
-        opts: { background: true, scale: 1 },
+        background: true,
       });
 
       // Convert blob to data URL
