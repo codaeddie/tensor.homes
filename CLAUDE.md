@@ -169,12 +169,16 @@ All API routes follow RESTful conventions and are protected with Clerk authentic
 - Store full TLStoreSnapshot as JSON in the `Project.snapshot` field
 
 **Authentication flow:**
-- Clerk middleware (`middleware.ts`) protects `/dashboard` and `/editor` routes using Edge Runtime
+- Clerk middleware (`middleware.ts`) protects `/dashboard` and `/editor` routes using **Node.js Runtime**
 - Public routes: `/`, `/signin`, `/signup`, `/view/*`, all API routes
 - User IDs from Clerk are used as primary keys in the User table
 - Use `@clerk/nextjs/server` helpers (`auth()`, `currentUser()`) for accessing user data in API routes
 - Clerk automatically handles session management, JWTs, and user profile updates
-- **Important:** Middleware runs on Edge Runtime (Next.js 15 default), use `async/await` with `auth.protect()`
+- **CRITICAL:** Middleware MUST use `runtime: "nodejs"` in config because Clerk v6.33.7 requires Node.js crypto module
+  - Edge Runtime does NOT support Node.js crypto module (only Web Crypto API subset)
+  - Attempting to use Edge Runtime causes Vercel deployment error: "The Edge Function 'middleware' is referencing unsupported modules: @clerk: #crypto"
+  - Next.js 15.5+ supports Node.js middleware runtime via `export const config = { runtime: "nodejs" }`
+- **Pattern:** Use `async/await` with `auth.protect()` in clerkMiddleware handler
 
 **Auto-save implementation:**
 - Editor page uses `useRef` to store editor instance and auto-save timer
