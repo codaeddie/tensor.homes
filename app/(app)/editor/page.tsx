@@ -11,7 +11,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { type Editor, Tldraw } from "tldraw";
+import { type Editor, getSnapshot, Tldraw } from "tldraw";
 import "tldraw/tldraw.css";
 
 export default function EditorPage() {
@@ -28,7 +28,7 @@ export default function EditorPage() {
       const editor = editorRef.current;
 
       // Get snapshot
-      const snapshot = editor.store.getSnapshot();
+      const snapshot = getSnapshot(editor.store);
 
       // Generate thumbnail using editor.toImage() (not deprecated exportToBlob)
       const shapeIds = editor.getCurrentPageShapeIds();

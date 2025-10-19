@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     const project = await prisma.project.create({
       data: {
         title,
-        snapshot,
+        snapshot: snapshot as any, // TLStoreSnapshot stored as Prisma Json
         userId,
       },
     });

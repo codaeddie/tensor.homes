@@ -13,7 +13,7 @@
 
 import { useRouter } from "next/navigation";
 import { use, useEffect, useRef, useState } from "react";
-import { type Editor, Tldraw } from "tldraw";
+import { type Editor, getSnapshot, Tldraw } from "tldraw";
 import type { ProjectWithSnapshot } from "@/lib/types";
 import "tldraw/tldraw.css";
 
@@ -85,7 +85,7 @@ export default function EditorIdPage({ params }: PageProps) {
       const editor = editorRef.current;
 
       // Get snapshot
-      const snapshot = editor.store.getSnapshot();
+      const snapshot = getSnapshot(editor.store);
 
       const body: any = {
         title,

@@ -11,7 +11,10 @@
       "Bash(npm run dev)",
       "Bash(git add -A)",
       "Bash(git commit -m \"$(cat <<''EOF''\nImplement tensor.homes tldraw platform\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push origin main)"
+      "Bash(git push origin main)",
+      "Bash(npm run build)",
+      "WebSearch",
+      "WebFetch(domain:tldraw.dev)"
     ],
     "deny": [],
     "ask": []
