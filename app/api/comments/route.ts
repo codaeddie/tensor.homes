@@ -4,6 +4,8 @@
  * POST /api/comments - Add a comment to a published project
  */
 
+export const runtime = "nodejs"; // Required for Prisma Client
+
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";

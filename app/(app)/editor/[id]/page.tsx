@@ -12,8 +12,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use, useEffect, useRef, useState } from "react";
-import { type Editor, getSnapshot, Tldraw } from "tldraw";
+import { use, useCallback, useEffect, useRef, useState } from "react";
+import { type Editor, getSnapshot, type TLStoreSnapshot, Tldraw } from "tldraw";
 import type { ProjectWithSnapshot } from "@/lib/types";
 import "tldraw/tldraw.css";
 
@@ -33,28 +33,7 @@ export default function EditorIdPage({ params }: PageProps) {
   const [title, setTitle] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  useEffect(() => {
-    fetchProject();
-    return () => {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
-    };
-  }, [id]);
-
-  useEffect(() => {
-    if (project && editorRef.current && hasUnsavedChanges) {
-      // Set up auto-save timer (5 seconds)
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
-      autoSaveTimerRef.current = setTimeout(() => {
-        handleSave();
-      }, 5000);
-    }
-  }, [hasUnsavedChanges]);
-
-  async function fetchProject() {
+  const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/projects/${id}`);
@@ -75,63 +54,91 @@ export default function EditorIdPage({ params }: PageProps) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [id, router]);
 
-  async function handleSave(generateThumbnail = false) {
-    if (!editorRef.current || !project) return;
+  const handleSave = useCallback(
+    async (generateThumbnail = false) => {
+      if (!editorRef.current || !project) return;
 
-    try {
-      setSaving(true);
-      const editor = editorRef.current;
+      try {
+        setSaving(true);
+        const editor = editorRef.current;
 
-      // Get snapshot
-      const snapshot = getSnapshot(editor.store);
+        // Get snapshot
+        const snapshot = getSnapshot(editor.store);
 
-      const body: any = {
-        title,
-        snapshot,
-      };
+        const body: {
+          title: string;
+          snapshot: TLStoreSnapshot;
+          thumbnailDataUrl?: string;
+        } = {
+          title,
+          snapshot,
+        };
 
-      // Generate thumbnail if requested using editor.toImage() (not deprecated exportToBlob)
-      if (generateThumbnail) {
-        try {
-          const shapeIds = editor.getCurrentPageShapeIds();
-          const { blob } = await editor.toImage([...shapeIds], {
-            format: "png",
-            background: true,
-          });
+        // Generate thumbnail if requested using editor.toImage() (not deprecated exportToBlob)
+        if (generateThumbnail) {
+          try {
+            const shapeIds = editor.getCurrentPageShapeIds();
+            const { blob } = await editor.toImage([...shapeIds], {
+              format: "png",
+              background: true,
+            });
 
-          const reader = new FileReader();
-          const thumbnailDataUrl = await new Promise<string>((resolve) => {
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.readAsDataURL(blob);
-          });
+            const reader = new FileReader();
+            const thumbnailDataUrl = await new Promise<string>((resolve) => {
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            });
 
-          body.thumbnailDataUrl = thumbnailDataUrl;
-        } catch (err) {
-          console.error("Failed to generate thumbnail:", err);
+            body.thumbnailDataUrl = thumbnailDataUrl;
+          } catch (err) {
+            console.error("Failed to generate thumbnail:", err);
+          }
         }
+
+        // Update project
+        const res = await fetch(`/api/projects/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) throw new Error("Failed to save project");
+
+        const updated = await res.json();
+        setProject(updated);
+        setHasUnsavedChanges(false);
+      } catch (err) {
+        alert("Failed to save project");
+        console.error(err);
+      } finally {
+        setSaving(false);
       }
+    },
+    [id, project, title],
+  );
 
-      // Update project
-      const res = await fetch(`/api/projects/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+  useEffect(() => {
+    fetchProject();
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [fetchProject]);
 
-      if (!res.ok) throw new Error("Failed to save project");
-
-      const updated = await res.json();
-      setProject(updated);
-      setHasUnsavedChanges(false);
-    } catch (err) {
-      alert("Failed to save project");
-      console.error(err);
-    } finally {
-      setSaving(false);
+  useEffect(() => {
+    if (project && editorRef.current && hasUnsavedChanges) {
+      // Set up auto-save timer (5 seconds)
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+      autoSaveTimerRef.current = setTimeout(() => {
+        handleSave();
+      }, 5000);
     }
-  }
+  }, [hasUnsavedChanges, handleSave, project]);
 
   async function handleTogglePublish() {
     try {

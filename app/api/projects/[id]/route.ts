@@ -6,6 +6,8 @@
  * DELETE /api/projects/[id] - Delete project and associated thumbnail
  */
 
+export const runtime = "nodejs"; // Required for Prisma Client
+
 import { auth } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
 import { deleteThumbnail, uploadThumbnail } from "@/lib/blob";
@@ -43,7 +45,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
     const response: ProjectWithSnapshot = {
       id: project.id,
       title: project.title,
-      snapshot: project.snapshot as any, // Prisma Json type
+      snapshot: project.snapshot as ProjectWithSnapshot["snapshot"],
       thumbnailUrl: project.thumbnailUrl,
       published: project.published,
       createdAt: project.createdAt,
@@ -92,9 +94,14 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
     }
 
     // Update project
-    const updateData: any = {};
+    const updateData: {
+      title?: string;
+      snapshot?: object;
+      published?: boolean;
+      thumbnailUrl?: string;
+    } = {};
     if (title !== undefined) updateData.title = title;
-    if (snapshot !== undefined) updateData.snapshot = snapshot;
+    if (snapshot !== undefined) updateData.snapshot = snapshot as object;
     if (published !== undefined) updateData.published = published;
 
     // Handle thumbnail update
@@ -121,7 +128,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
     const response: ProjectWithSnapshot = {
       id: project.id,
       title: project.title,
-      snapshot: project.snapshot as any,
+      snapshot: project.snapshot as ProjectWithSnapshot["snapshot"],
       thumbnailUrl: project.thumbnailUrl,
       published: project.published,
       createdAt: project.createdAt,

@@ -4,6 +4,8 @@
  * GET /api/comments/[projectId] - Get all comments for a published project
  */
 
+export const runtime = "nodejs"; // Required for Prisma Client
+
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import type { CommentWithUser } from "@/lib/types";

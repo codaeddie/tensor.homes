@@ -10,7 +10,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { Tldraw } from "tldraw";
 import type { CommentWithUser, ProjectWithSnapshot } from "@/lib/types";
 import "tldraw/tldraw.css";
@@ -30,12 +30,7 @@ export default function ViewIdPage({ params }: PageProps) {
   const [submitting, setSubmitting] = useState(false);
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchProject();
-    fetchComments();
-  }, [fetchComments, fetchProject]);
-
-  async function fetchProject() {
+  const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/projects/${id}`);
@@ -51,9 +46,9 @@ export default function ViewIdPage({ params }: PageProps) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [id]);
 
-  async function fetchComments() {
+  const fetchComments = useCallback(async () => {
     try {
       const res = await fetch(`/api/comments/${id}`);
       if (res.ok) {
@@ -63,7 +58,12 @@ export default function ViewIdPage({ params }: PageProps) {
     } catch (err) {
       console.error("Failed to fetch comments:", err);
     }
-  }
+  }, [id]);
+
+  useEffect(() => {
+    fetchProject();
+    fetchComments();
+  }, [fetchProject, fetchComments]);
 
   async function handleSubmitComment(e: React.FormEvent) {
     e.preventDefault();

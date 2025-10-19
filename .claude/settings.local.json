@@ -14,7 +14,14 @@
       "Bash(git push origin main)",
       "Bash(npm run build)",
       "WebSearch",
-      "WebFetch(domain:tldraw.dev)"
+      "WebFetch(domain:tldraw.dev)",
+      "Bash(git add middleware.ts)",
+      "Bash(git commit -m \"Use Node.js runtime for middleware\")",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cat .env.local)",
+      "Bash(find app/api -name \"*.ts\" -exec grep -l \"export const runtime\" {} ;)",
+      "Bash(npm run format)"
     ],
     "deny": [],
     "ask": []

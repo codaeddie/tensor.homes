@@ -4,6 +4,8 @@
  * POST /api/projects/[id]/publish - Toggle the published status of a project
  */
 
+export const runtime = "nodejs"; // Required for Prisma Client
+
 import { auth } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";

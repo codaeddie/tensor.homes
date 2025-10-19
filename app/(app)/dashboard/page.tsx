@@ -10,9 +10,10 @@
 
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ProjectMetadata } from "@/lib/types";
 
 export default function DashboardPage() {
@@ -26,6 +27,21 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [publishingId, setPublishingId] = useState<string | null>(null);
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/projects");
+      if (!res.ok) throw new Error("Failed to fetch projects");
+      const data = await res.json();
+      setProjects(data);
+      setFilteredProjects(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchProjects();
@@ -42,21 +58,6 @@ export default function DashboardPage() {
       setFilteredProjects(projects);
     }
   }, [search, projects]);
-
-  async function fetchProjects() {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/projects");
-      if (!res.ok) throw new Error("Failed to fetch projects");
-      const data = await res.json();
-      setProjects(data);
-      setFilteredProjects(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this project?")) return;
@@ -147,12 +148,13 @@ export default function DashboardPage() {
               className="overflow-hidden rounded-lg border bg-white shadow-sm transition hover:shadow-md"
             >
               <Link href={`/editor/${project.id}`}>
-                <div className="aspect-video bg-gray-100">
+                <div className="aspect-video bg-gray-100 relative">
                   {project.thumbnailUrl ? (
-                    <img
+                    <Image
                       src={project.thumbnailUrl}
                       alt={project.title}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-gray-400">

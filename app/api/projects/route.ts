@@ -5,6 +5,8 @@
  * GET /api/projects - List all projects for the authenticated user
  */
 
+export const runtime = "nodejs"; // Required for Prisma Client
+
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
 import { uploadThumbnail } from "@/lib/blob";
@@ -59,7 +61,7 @@ export async function POST(req: NextRequest) {
     const project = await prisma.project.create({
       data: {
         title,
-        snapshot: snapshot as any, // TLStoreSnapshot stored as Prisma Json
+        snapshot: snapshot as object, // TLStoreSnapshot stored as Prisma Json
         userId,
       },
     });
