@@ -4,8 +4,8 @@
  * Protects routes under /dashboard and /editor from unauthorized access.
  * Public routes include /, /signin, /view/*, and all /API routes.
  *
- * Uses Edge Runtime (default) - Clerk v6.33.7 is fully compatible with Edge Runtime.
- * Uses manual auth check for better runtime compatibility.
+ * Uses Node.js runtime (Next.js 15.5+) to support Clerk's crypto module.
+ * Uses manual auth check instead of auth.protect() for Node.js runtime compatibility.
  */
 
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
@@ -23,6 +23,7 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
+  runtime: "nodejs", // Required for Clerk crypto module support (Next.js 15.5+)
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
