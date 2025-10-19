@@ -5,15 +5,20 @@
  * Public routes include /, /signin, /view/*, and all /API routes.
  *
  * Uses Edge Runtime (default) - Clerk v6.33.7 is fully compatible with Edge Runtime.
+ * Uses manual auth check for better runtime compatibility.
  */
 
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/editor(.*)"]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
-    auth.protect();
+    const { userId, redirectToSignIn } = await auth();
+
+    if (!userId) {
+      return redirectToSignIn();
+    }
   }
 });
 
