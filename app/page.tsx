@@ -4,14 +4,12 @@
  * Simple marketing page with call-to-action to sign in or get started.
  */
 
-export const runtime = "nodejs"; // Required for Clerk auth
-
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function HomePage() {
-  const { userId } = await auth();
+export default function HomePage() {
+  const { userId } = auth();
 
   // Redirect to dashboard if already signed in
   if (userId) {
@@ -77,7 +75,7 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="rounded-lg border p-6">
-              <h4 className="mb-3 text-xl font-semibold">Main Stage</h4>
+              <h4 className="mb-3 text-xl font-sememibold">Main Stage</h4>
               <p className="text-gray-600">
                 Full-featured tldraw editor with auto-save. Create and edit
                 drawings with powerful tools and controls.
