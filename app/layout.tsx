@@ -3,10 +3,12 @@
  *
  * Wraps the entire application with:
  * - ClerkProvider for authentication
+ * - Analytics for Vercel Analytics tracking
  * - Global fonts (Geist Sans and Geist Mono)
  * - Global CSS styles
  */
 
+import { Analytics } from "@vercel/analytics/next";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -39,6 +41,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
