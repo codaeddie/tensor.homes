@@ -113,24 +113,27 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Backstage</h1>
+    <div className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-12 flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Projects</h1>
+          <p className="mt-2 text-sm text-gray-500">Manage your creative work</p>
+        </div>
         <Link
           href="/editor"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-gray-800 hover:shadow-lg"
         >
           New Project
         </Link>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-8">
         <input
           type="text"
-          placeholder="Search projects..."
+          placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-md rounded-lg border px-4 py-2"
+          className="w-full max-w-sm rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition-all focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
         />
       </div>
 
@@ -141,75 +144,75 @@ export default function DashboardPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="overflow-hidden rounded-lg border bg-white shadow-sm transition hover:shadow-md"
+              className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-all hover:border-gray-300 hover:shadow-lg"
             >
               <Link href={`/editor/${project.id}`}>
-                <div className="aspect-video bg-gray-100 relative">
+                <div className="relative aspect-video overflow-hidden bg-gray-50">
                   {project.thumbnailUrl ? (
                     <Image
                       src={project.thumbnailUrl}
                       alt={project.title}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-gray-400">
-                      No thumbnail
+                    <div className="flex h-full items-center justify-center text-sm text-gray-300">
+                      No preview
                     </div>
                   )}
                 </div>
               </Link>
 
-              <div className="p-4">
-                <h3 className="mb-2 truncate font-semibold">{project.title}</h3>
-                <p className="mb-3 text-xs text-gray-500">
-                  Updated {new Date(project.updatedAt).toLocaleDateString()}
+              <div className="p-5">
+                <h3 className="mb-1 truncate text-base font-medium text-gray-900">{project.title}</h3>
+                <p className="mb-4 text-xs text-gray-400">
+                  {new Date(project.updatedAt).toLocaleDateString()}
                 </p>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   <Link
                     href={`/editor/${project.id}`}
-                    className="rounded bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+                    className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
                   >
                     Edit
                   </Link>
                   <button
                     onClick={() => handleTogglePublish(project.id)}
                     disabled={publishingId === project.id}
-                    className={`rounded px-3 py-1 text-sm disabled:opacity-50 ${
+                    className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
                       project.published
-                        ? "bg-green-100 text-green-700 hover:bg-green-200"
-                        : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                        ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                     }`}
                     type="button"
                   >
                     {publishingId === project.id
                       ? "..."
                       : project.published
-                        ? "Published"
-                        : "Unpublished"}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(project.id)}
-                    disabled={deletingId === project.id}
-                    className="rounded bg-red-100 px-3 py-1 text-sm text-red-700 hover:bg-red-200 disabled:opacity-50"
-                    type="button"
-                  >
-                    {deletingId === project.id ? "Deleting..." : "Delete"}
+                        ? "Live"
+                        : "Draft"}
                   </button>
                   {project.published && (
                     <Link
                       href={`/view/${project.id}`}
-                      className="rounded bg-blue-100 px-3 py-1 text-sm text-blue-700 hover:bg-blue-200"
+                      className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
                       target="_blank"
                     >
                       View
                     </Link>
                   )}
+                  <button
+                    onClick={() => handleDelete(project.id)}
+                    disabled={deletingId === project.id}
+                    className="ml-auto rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50"
+                    type="button"
+                  >
+                    {deletingId === project.id ? "..." : "Delete"}
+                  </button>
                 </div>
               </div>
             </div>

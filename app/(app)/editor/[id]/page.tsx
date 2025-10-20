@@ -11,6 +11,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useCallback, useEffect, useRef, useState } from "react";
 import { type Editor, getSnapshot, type TLStoreSnapshot, Tldraw } from "tldraw";
@@ -161,7 +162,7 @@ export default function EditorIdPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="flex h-screen items-center justify-center">
         <p className="text-gray-500">Loading project...</p>
       </div>
     );
@@ -169,14 +170,22 @@ export default function EditorIdPage({ params }: PageProps) {
 
   if (!project) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="flex h-screen items-center justify-center">
         <p className="text-red-500">Project not found</p>
       </div>
     );
   }
 
   return (
-    <div className="relative h-[calc(100vh-4rem)]">
+    <div className="relative h-screen">
+      {/* Back button */}
+      <Link
+        href="/dashboard"
+        className="absolute left-4 top-4 z-50 flex items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-sm font-medium text-gray-700 backdrop-blur-sm transition-all hover:bg-white hover:shadow-md"
+      >
+        ← Back
+      </Link>
+
       {/* Floating toolbar */}
       <div className="absolute left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-white/80 px-4 py-2.5 shadow-lg backdrop-blur-sm">
         <input
