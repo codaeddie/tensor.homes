@@ -68,26 +68,29 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <div className="flex items-center justify-between border-b bg-white px-4 py-3">
+    <div className="relative h-[calc(100vh-4rem)]">
+      {/* Floating toolbar */}
+      <div className="absolute left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-white/80 px-4 py-2.5 shadow-lg backdrop-blur-sm">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="text-lg font-semibold outline-none"
-          placeholder="Project title"
+          className="min-w-[200px] border-none bg-transparent text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400"
+          placeholder="Untitled Project"
         />
+        <div className="h-5 w-px bg-gray-200" />
         <button
           onClick={handleSave}
           disabled={saving}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
+          className="rounded-lg bg-gray-900 px-3.5 py-1.5 text-sm font-medium text-white transition-all hover:bg-gray-800 hover:shadow-md disabled:bg-gray-300 disabled:text-gray-500"
           type="button"
         >
-          {saving ? "Saving..." : "Save Project"}
+          {saving ? "Saving..." : "Save"}
         </button>
       </div>
 
-      <div className="flex-1">
+      {/* Editor */}
+      <div className="h-full">
         <Tldraw
           onMount={(editor) => {
             editorRef.current = editor;

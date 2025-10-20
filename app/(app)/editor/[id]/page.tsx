@@ -176,8 +176,9 @@ export default function EditorIdPage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <div className="flex items-center justify-between border-b bg-white px-4 py-3">
+    <div className="relative h-[calc(100vh-4rem)]">
+      {/* Floating toolbar */}
+      <div className="absolute left-1/2 top-4 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl bg-white/80 px-4 py-2.5 shadow-lg backdrop-blur-sm">
         <input
           type="text"
           value={title}
@@ -185,47 +186,58 @@ export default function EditorIdPage({ params }: PageProps) {
             setTitle(e.target.value);
             setHasUnsavedChanges(true);
           }}
-          className="text-lg font-semibold outline-none"
-          placeholder="Project title"
+          className="min-w-[200px] border-none bg-transparent text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400"
+          placeholder="Untitled Project"
         />
-        <div className="flex items-center gap-3">
-          {hasUnsavedChanges && !saving && (
-            <span className="text-sm text-yellow-600">Unsaved changes</span>
-          )}
-          {saving && <span className="text-sm text-gray-500">Saving...</span>}
-          <button
-            onClick={() => handleSave(true)}
-            disabled={saving}
-            className="rounded-lg bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 disabled:bg-gray-400"
-            type="button"
+        
+        {/* Status indicator */}
+        {(hasUnsavedChanges || saving) && (
+          <>
+            <div className="h-5 w-px bg-gray-200" />
+            <span className="text-xs text-gray-500">
+              {saving ? "Saving..." : "●"}
+            </span>
+          </>
+        )}
+        
+        <div className="h-5 w-px bg-gray-200" />
+        
+        {/* Action buttons */}
+        <button
+          onClick={() => handleSave(true)}
+          disabled={saving}
+          className="rounded-lg bg-gray-900 px-3.5 py-1.5 text-sm font-medium text-white transition-all hover:bg-gray-800 hover:shadow-md disabled:bg-gray-300 disabled:text-gray-500"
+          type="button"
+        >
+          Save
+        </button>
+        
+        <button
+          onClick={() => handleTogglePublish()}
+          className={`rounded-lg px-3.5 py-1.5 text-sm font-medium text-white transition-all hover:shadow-md ${
+            project.published
+              ? "bg-emerald-600 hover:bg-emerald-700"
+              : "bg-gray-400 hover:bg-gray-500"
+          }`}
+          type="button"
+        >
+          {project.published ? "Published" : "Private"}
+        </button>
+        
+        {project.published && (
+          <a
+            href={`/view/${id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-medium text-white transition-all hover:bg-blue-700 hover:shadow-md"
           >
-            Save + Thumbnail
-          </button>
-          <button
-            onClick={() => handleTogglePublish()}
-            className={`rounded-lg px-4 py-2 text-white ${
-              project.published
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-yellow-600 hover:bg-yellow-700"
-            }`}
-            type="button"
-          >
-            {project.published ? "Published" : "Unpublished"}
-          </button>
-          {project.published && (
-            <a
-              href={`/view/${id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              View Public
-            </a>
-          )}
-        </div>
+            View
+          </a>
+        )}
       </div>
 
-      <div className="flex-1">
+      {/* Editor */}
+      <div className="h-full">
         <Tldraw
           snapshot={project.snapshot}
           onMount={(editor) => {
