@@ -7,9 +7,9 @@ const isPublicRoute = createRouteMatcher([
   '/view(.*)', // Public view routes for published projects
 ]);
 
-export default clerkMiddleware(async (auth, request) => {
+export default clerkMiddleware((auth, request) => {
   if (!isPublicRoute(request)) {
-    await auth.protect();
+    auth().protect();
   }
 });
 
